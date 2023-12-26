@@ -5,7 +5,7 @@ This project contains the code that realize the web application Snippetbox as de
  - [x] Chapter 1: Introduction
  - [x] Chapter 2: Foundations
  - [x] Chapter 3: Configuration and Error Handling
- - [ ] Chapter 4: Database-Driven Responses
+ - [x] Chapter 4: Database-Driven Responses
  - [ ] Chapter 5: Dynamic HTML Tempplates
  - [ ] Chapter 6: Middleware
  - [ ] Chapter 7: RESTful Routing
