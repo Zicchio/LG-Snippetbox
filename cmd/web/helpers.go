@@ -1,10 +1,20 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
+
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
+	if td == nil {
+		td = &templateData{}
+	}
+	td.CurrentYear = time.Now().Year()
+	return td
+}
 
 // The serverError helper writes an error message and stack trace to the errorLog,
 // then sends a generic 500 Internal Server Error response to the user.
@@ -27,4 +37,28 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 // the user.
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
+}
+
+// Fetch cached template key-es by name and render it with appropriate data
+func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
+	ts, ok := app.templateCache[name]
+	if !ok {
+		app.serverError(w, fmt.Errorf("the template %s does not exists", name))
+		return
+	}
+
+	// buff will hold the rendered template so that, in case of errors,
+	// we don't render a faulty page directly to user
+
+	buf := new(bytes.Buffer)
+	// NOTE: here the value of the snippet is used in the template - it is the
+	// ONLY value of dynamic data that can be passed in the template! If you
+	// need to pass more data, you can wrap in an approrpriate struct
+	err := ts.Execute(buf, app.addDefaultData(td, r))
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	// if not error, we can render the buf
+	buf.WriteTo(w)
 }

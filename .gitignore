@@ -19,3 +19,7 @@
 
 # Go workspace file
 go.work
+
+#Custom additions
+.vscode
+scripts/run.sh
