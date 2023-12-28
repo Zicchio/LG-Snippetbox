@@ -7,7 +7,7 @@ Snippetbox is a web app that let's users share snippets of text, like Pastebin.
  - [x] Chapter 2: Foundations
  - [x] Chapter 3: Configuration and Error Handling
  - [x] Chapter 4: Database-Driven Responses
- - [ ] Chapter 5: Dynamic HTML Templates
+ - [x] Chapter 5: Dynamic HTML Templates
  - [ ] Chapter 6: Middleware
  - [ ] Chapter 7: RESTful Routing
  - [ ] Chapter 8: Processing Forms
