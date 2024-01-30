@@ -2,13 +2,16 @@
 This project contains the code that realize the web application Snippetbox as described in the book Let's Go by Alex Edwards.
 Snippetbox is a web app that let's users share snippets of text, like Pastebin.
 
+# Usage
+TODO
+
 # Current Progress
  - [x] Chapter 1: Introduction
  - [x] Chapter 2: Foundations
  - [x] Chapter 3: Configuration and Error Handling
  - [x] Chapter 4: Database-Driven Responses
  - [x] Chapter 5: Dynamic HTML Templates
- - [ ] Chapter 6: Middleware
+ - [x] Chapter 6: Middleware
  - [ ] Chapter 7: RESTful Routing
  - [ ] Chapter 8: Processing Forms
  - [ ] Chapter 9: Stateful HTTP

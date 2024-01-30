@@ -22,4 +22,4 @@ go.work
 
 #Custom additions
 .vscode
-scripts/run.sh
+scripts/utility
