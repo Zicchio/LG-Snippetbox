@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Zicchio/LG-Snippetbox/pkg/forms"
 	"github.com/Zicchio/LG-Snippetbox/pkg/models"
 )
 
@@ -65,22 +66,35 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	// Create some variables holding dummy data. We'll remove these later on
-	// during the build.
-	title := "O snail"
-	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
-	expires := "7"
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
-	id, err := app.snippets.Insert(title, content, expires)
+	form := forms.New(r.PostForm)
+	form.Required("title", "content", "expires")
+	form.MaxLenght("title", 100)
+	form.AdmittedValues("expires", "365", "7", "1")
+
+	if !form.Valid() {
+		app.render(w, r, "create.page.go.tmpl", &templateData{
+			Form: form,
+		})
+	}
+
+	id, err := app.snippets.Insert(
+		form.Get("title"),
+		form.Get("content"),
+		form.Get("expires"))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 	// redirect the user to the newly created snippet
-	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	// TODO
-	w.Write([]byte("This page will visualize a form creating a new snippet"))
+	app.render(w, r, "create.page.go.tmpl", nil)
 }

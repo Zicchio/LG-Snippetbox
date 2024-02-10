@@ -13,7 +13,7 @@ TODO
  - [x] Chapter 5: Dynamic HTML Templates
  - [x] Chapter 6: Middleware
  - [x] Chapter 7: RESTful Routing
- - [ ] Chapter 8: Processing Forms
+ - [x] Chapter 8: Processing Forms
  - [ ] Chapter 9: Stateful HTTP
  - [ ] Chapter 10: Security Improvements
  - [ ] Chapter 11: User Authentication

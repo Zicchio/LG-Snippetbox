@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/Zicchio/LG-Snippetbox/pkg/forms"
 	"github.com/Zicchio/LG-Snippetbox/pkg/models"
 )
 
@@ -18,6 +19,7 @@ type templateData struct {
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 	CurrentYear int
+	Form        *forms.Form
 }
 
 // Custom format the date. The custom format is similar to RFC822
