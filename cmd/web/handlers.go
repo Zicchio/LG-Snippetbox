@@ -83,18 +83,17 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	id, err := app.snippets.Insert(
-		form.Get("title"),
-		form.Get("content"),
-		form.Get("expires"))
+	id, err := app.snippets.Insert(form.Get("title"), form.Get("content"), form.Get("expires"))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	// redirect the user to the newly created snippet
+
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "create.page.go.tmpl", nil)
+	app.render(w, r, "create.page.go.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }

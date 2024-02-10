@@ -2,19 +2,20 @@
 {{define "title"}}Create a New Snippet{{end}}
 {{define "main"}}
 <form action='/snippet/create' method='POST'>
+    {{with .Form}}
     <div>
         <label>Title:</label>
         {{with .Errors.Get "title"}}
             <label class='error'>{{.}}</label>
         {{end}}
-        <input type='text' name='title' value='{{.FormData.Get "title"}}'>
+        <input type='text' name='title' value='{{.Get "title"}}'>
     </div>
     <div>
         <label>Content:</label>
         {{with .Errors.Get "content"}}
             <label class='error'>{{.}}</label>
         {{end}}
-        <textarea type='text' name='content' value='{{.FormData.Get "content"}}'></textarea>
+        <textarea type='text' name='content' value='{{.Get "content"}}'></textarea>
     </div>
     <div>
         <label>Delete in:</label>
@@ -29,5 +30,6 @@
     <div>
         <input type='submit' value='Publish snippet'>
     </div>
+    {{end}}
 </form>
 {{end}}
