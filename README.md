@@ -12,7 +12,7 @@ TODO
  - [x] Chapter 4: Database-Driven Responses
  - [x] Chapter 5: Dynamic HTML Templates
  - [x] Chapter 6: Middleware
- - [ ] Chapter 7: RESTful Routing
+ - [x] Chapter 7: RESTful Routing
  - [ ] Chapter 8: Processing Forms
  - [ ] Chapter 9: Stateful HTTP
  - [ ] Chapter 10: Security Improvements
