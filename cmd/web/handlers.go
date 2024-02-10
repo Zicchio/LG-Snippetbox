@@ -10,10 +10,11 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
+	// NOTE: the 3 lines below are not required with pat, as pat library will check / exactly
+	// if r.URL.Path != "/" {
+	// 	app.notFound(w)
+	// 	return
+	// }
 
 	s, err := app.snippets.Latest()
 	if err != nil {
@@ -30,7 +31,14 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	// NOTE: the 4 lines below are required if "id" is query parameter instead of path variable
+	// id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	// if err != nil || id < 1 {
+	// 	app.notFound(w)
+	// 	return
+	// }
+
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
@@ -50,11 +58,12 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
+	// NOTE: the 5 lines below are commented as they were used to check that the method was a post, required as of routing from Go1.21 http package
+	// if r.Method != http.MethodPost {
+	// 	w.Header().Set("Allow", http.MethodPost)
+	// 	app.clientError(w, http.StatusMethodNotAllowed)
+	// 	return
+	// }
 
 	// Create some variables holding dummy data. We'll remove these later on
 	// during the build.
@@ -69,4 +78,9 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 	// redirect the user to the newly created snippet
 	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+}
+
+func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
+	// TODO
+	w.Write([]byte("This page will visualize a form creating a new snippet"))
 }

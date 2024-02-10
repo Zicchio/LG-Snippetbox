@@ -29,7 +29,8 @@ TODO
 
 # Further Improvements
 
-TODO: write section with additions over what is presented over the book (if any). Suggestion: add a login with some OAuth2.1 server (maybe Google or AAC)
+TODO: write section with additions over what is presented over the book (if any). Suggestion: add a login with some OAuth2.1 server (maybe Google or AAC).
+Routing using Go 1.22 could also be an idea.
 
 # Implementation Notes
 

@@ -27,7 +27,7 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 func (app *application) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// panic recivery is defined as a deferred function. Deferred functions are
-		// always run in thic case as Go unwinds the stack
+		// always run in this case as Go unwinds the stack
 		defer func() {
 			if err := recover(); err != nil {
 				// in case of error, close the connection and log the stack trace
