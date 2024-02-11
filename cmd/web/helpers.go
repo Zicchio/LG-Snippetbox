@@ -8,11 +8,14 @@ import (
 	"time"
 )
 
+// Function addDefaultData add to the page template some default information
+// that might be useful in _any_ page.
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
 		td = &templateData{}
 	}
 	td.CurrentYear = time.Now().Year()
+	td.Flash = app.session.PopString(r, "flash")
 	return td
 }
 
