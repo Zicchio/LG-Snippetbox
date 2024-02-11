@@ -15,7 +15,7 @@ TODO
  - [x] Chapter 7: RESTful Routing
  - [x] Chapter 8: Processing Forms
  - [x] Chapter 9: Stateful HTTP
- - [ ] Chapter 10: Security Improvements
+ - [x] Chapter 10: Security Improvements
  - [ ] Chapter 11: User Authentication
  - [ ] Chapter 12: Using Request Context
  - [ ] Chapter 13: Testing

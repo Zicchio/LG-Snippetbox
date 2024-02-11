@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"html/template"
@@ -13,6 +14,11 @@ import (
 
 	_ "github.com/go-sql-driver/mysql" // imported as we need the init() function to register mysql in database/sql
 	"github.com/golangcollege/sessions"
+)
+
+const (
+	TlsCertificatePath = "./tls/cert.pem"
+	TlsSecretKeyPath   = "./tls/key.pem"
 )
 
 // Define an application struct to hold the application-wide dependencies for the
@@ -69,13 +75,31 @@ func main() {
 		templateCache: templateCache,
 	}
 
+	tlsConfig := &tls.Config{
+		PreferServerCipherSuites: true,
+		CipherSuites: []uint16{
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+		}, // NOTE: only modern encryption are allowed: old browsers might not comply
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+		MinVersion:       tls.VersionTLS12, // NOTE: prevent TLS downgrade attack, but old software might not comply
+	}
+
 	srv := &http.Server{
-		Addr:     *addr,
-		ErrorLog: errorLog,
-		Handler:  app.routes(),
+		Addr:         *addr,
+		ErrorLog:     errorLog,
+		Handler:      app.routes(),
+		TLSConfig:    tlsConfig,
+		IdleTimeout:  1 * time.Minute,
+		ReadTimeout:  5 * time.Second,  // NOTE: slow read timeouts prevents slow-clients attacks (such as Slowloris)
+		WriteTimeout: 10 * time.Second, // NOTE: behaviour of WriteTimeout changes between HTTP and HTTPS servers
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS(TlsCertificatePath, TlsSecretKeyPath)
 	errorLog.Fatal(err)
 }

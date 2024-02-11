@@ -23,3 +23,6 @@ go.work
 #Custom additions
 .vscode
 scripts/utility
+
+# Private secrets (should not be here anyway, but it's ok for learninf purposes)
+tls/*.pem
