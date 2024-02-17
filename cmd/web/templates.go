@@ -16,11 +16,13 @@ import (
 // Personal NOTE: I don't love the fact that the same template wrapper
 // is used in multiple places, but I guess it is valid anyway
 type templateData struct {
-	CurrentYear int
-	Flash       string
-	Form        *forms.Form
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
+	CSRFToken       string
+	CurrentYear     int
+	Flash           string
+	Form            *forms.Form
+	IsAuthenticated bool
+	Snippet         *models.Snippet
+	Snippets        []*models.Snippet
 }
 
 // Custom format the date. The custom format is similar to RFC822

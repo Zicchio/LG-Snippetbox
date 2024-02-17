@@ -100,3 +100,81 @@ func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request
 		Form: forms.New(nil),
 	})
 }
+
+func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "signup.page.go.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
+}
+
+func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("name")
+	form.MaxLenght("name", 255)
+	form.Required("email")
+	form.MaxLenght("email", 255)
+	form.MatchesPattern("email", forms.EmailRX)
+	form.Required("password")
+	form.MinLength("password", 10)
+	form.MaxLenght("password", 255)
+
+	if !form.Valid() {
+		app.render(w, r, "signup.page.go.tmpl", &templateData{
+			Form: form,
+		})
+		return
+	}
+
+	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
+	if err != nil {
+		if errors.Is(err, models.ErrDuplicateEmail) {
+			form.Errors.Add("email", "Email address already in use")
+			app.render(w, r, "signup.page.go.tmpl", &templateData{Form: form})
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+	app.session.Put(r, "flash", "Signup was successfull. Please log in.")
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+}
+
+func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "login.page.go.tmpl", &templateData{Form: forms.New(nil)})
+}
+
+func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	id, err := app.users.Authenticate(form.Get("email"), form.Get("password"))
+	if err != nil {
+		if errors.Is(err, models.ErrInvalidCredentials) {
+			form.Errors.Add("generic", "Email or password was incorrect")
+			app.render(w, r, "login.page.go.tmpl", &templateData{Form: form})
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+	app.session.Put(r, "authenticatedUserID", id)
+	app.session.Put(r, "flash", "Login was succesfull.")
+	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
+}
+
+func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
+	// NOTE: this code should not be available to unauthenticated users
+	app.session.Remove(r, "authenticatedUserID")
+	app.session.Put(r, "flash", "You have been succesfully logged out")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}

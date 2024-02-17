@@ -30,6 +30,7 @@ type application struct {
 	session       *sessions.Session
 	snippets      *mysql.SnippetModel
 	templateCache map[string]*template.Template
+	users         *mysql.UserModel
 }
 
 func openDB(dns string) (*sql.DB, error) {
@@ -45,7 +46,7 @@ func openDB(dns string) (*sql.DB, error) {
 
 func main() {
 	addr := flag.String("addr", ":4000", "Http Network Address")
-	dns := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name") // to use a real password instead of pass, you need to configure
+	dns := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name") // NOTE: in non-demo environment, use a real password instead of pass
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key")          // NOTE: having a default secret key in the code is clearly bad security practice and is done only for demonstration purposes
 	flag.Parse()
 
@@ -66,6 +67,9 @@ func main() {
 
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
+	// Prevention measure against CSRF attacks
+	// session.Secure = true
+	// session.SameSite = http.SameSiteStrictMode
 
 	app := &application{
 		errorLog:      errorLog,
@@ -73,6 +77,7 @@ func main() {
 		session:       session,
 		snippets:      &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
+		users:         &mysql.UserModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{

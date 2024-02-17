@@ -16,7 +16,7 @@ TODO
  - [x] Chapter 8: Processing Forms
  - [x] Chapter 9: Stateful HTTP
  - [x] Chapter 10: Security Improvements
- - [ ] Chapter 11: User Authentication
+ - [x] Chapter 11: User Authentication
  - [ ] Chapter 12: Using Request Context
  - [ ] Chapter 13: Testing
  - Excercises (1 to 6)
@@ -29,8 +29,14 @@ TODO
 
 # Further Improvements
 
-TODO: write section with additions over what is presented over the book (if any). Suggestion: add a login with some OAuth2.1 server (maybe Google or AAC).
-Routing using Go 1.22 could also be an idea.
+TODO: write section with additions over what is presented over the book (if any).
+Possible ideas:
+1. login with some OAuth2.1 server (maybe Google or AAC).
+2. routing using Go 1.22 could also be an idea.
+3. admin page or roles for notes managements (edit, delete and update)
+    - might already be covered by the bool, update this note if needed
+    - roles might also be covered by *Let'd Go Further* but that's ok
+4. email verification
 
 # Implementation Notes
 

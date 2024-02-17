@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"runtime/debug"
 	"time"
+
+	"github.com/justinas/nosurf"
 )
 
 // Function addDefaultData add to the page template some default information
@@ -14,8 +16,10 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	if td == nil {
 		td = &templateData{}
 	}
+	td.CSRFToken = nosurf.Token(r)
 	td.CurrentYear = time.Now().Year()
 	td.Flash = app.session.PopString(r, "flash")
+	td.IsAuthenticated = app.isAuthenticated(r)
 	return td
 }
 
@@ -33,6 +37,11 @@ func (app *application) serverError(w http.ResponseWriter, err error) {
 // Request" when there's a problem with the request that the user sent.
 func (app *application) clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
+}
+
+// Returns the if the user is authenticated
+func (app *application) isAuthenticated(r *http.Request) bool {
+	return app.session.Exists(r, "authenticatedUserID")
 }
 
 // For consistency, we'll also implement a notFound helper. This is simply a
