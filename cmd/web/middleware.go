@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
+	"github.com/Zicchio/LG-Snippetbox/pkg/models"
 	"github.com/justinas/nosurf"
 )
 
@@ -62,5 +65,36 @@ func (app *application) requireAuthentication(next http.Handler) http.Handler {
 		// other caches)
 		w.Header().Add("Cache-Control", "no-store")
 		next.ServeHTTP(w, r)
+	})
+}
+
+// authenticate will add an user to the context if there is a currently
+// active user in the session, it exisst and it is active. Otherwise, move
+// to the next element in the chain
+func (app *application) authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check if a authenticatedUserID value exists in the session. If this *isn't
+		// present* then call the next handler in the chain as normal.
+		exists := app.session.Exists(r, "authenticatedUserID") // NOTE: this was the previous definition of "app.isAuthneticated(r)""
+		if !exists {                                           // if not authenticated, go on
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// If authenticated, check if it exists and is active.
+		// If no, delete authentication and go on
+		// If yes, add to context
+		user, err := app.users.Get(app.session.GetInt(r, "authenticatedUserID"))
+		if errors.Is(err, models.ErrNoRecord) || !user.Active {
+			app.session.Remove(r, "authenticatedUserID")
+			next.ServeHTTP(w, r)
+			return
+		} else if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
+		next.ServeHTTP(w, r.WithContext(ctx))
+
 	})
 }

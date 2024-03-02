@@ -16,6 +16,10 @@ import (
 	"github.com/golangcollege/sessions"
 )
 
+type contextKey string
+
+const contextKeyIsAuthenticated = contextKey("isAuthenticated")
+
 const (
 	TlsCertificatePath = "./tls/cert.pem"
 	TlsSecretKeyPath   = "./tls/key.pem"

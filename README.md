@@ -17,7 +17,7 @@ TODO
  - [x] Chapter 9: Stateful HTTP
  - [x] Chapter 10: Security Improvements
  - [x] Chapter 11: User Authentication
- - [ ] Chapter 12: Using Request Context
+ - [x] Chapter 12: Using Request Context
  - [ ] Chapter 13: Testing
  - Excercises (1 to 6)
     - [ ] Ex 1: add an about page

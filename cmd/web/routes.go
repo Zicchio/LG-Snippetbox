@@ -9,7 +9,7 @@ import (
 
 func (app *application) routes() http.Handler {
 	middlewareChain := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
-	dynamicMiddleware := alice.New(app.session.Enable, noSurf) // used for routes that requires session (handles via cookies)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate) // used for routes that requires session (handles via cookies)
 
 	// Routing with base htpp package as of Go 1.21
 	// mux := http.NewServeMux()
