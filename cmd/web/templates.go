@@ -27,7 +27,10 @@ type templateData struct {
 
 // Custom format the date. The custom format is similar to RFC822
 func humanDate(t time.Time) string {
-	return t.Format("02 Jan 2006 at 15:04") // Memo: format must contain a "rearrangment" of the value Jan 2 15:04:05 2006 MST
+	if t.IsZero() {
+		return ""
+	}
+	return t.UTC().Format("02 Jan 2006 at 15:04") // Memo: format must contain a "rearrangment" of the value Jan 2 15:04:05 2006 MST
 }
 
 // Memo: custom template functions must have at most 1 return value, or at most (value, err)
@@ -40,7 +43,7 @@ var functions = template.FuncMap{
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	cache := make(map[string]*template.Template)
 	// get all files matching the template suffix corresponding to full pages in the input directory
-	pages, err := filepath.Glob(filepath.Join(dir, "*.page.go.tmpl"))
+	pages, err := filepath.Glob(filepath.Join(dir, "*.page.gohtml"))
 	if err != nil {
 		return nil, err
 	}
@@ -53,11 +56,11 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 		if err != nil {
 			return nil, err
 		}
-		ts, err = ts.ParseGlob(filepath.Join(dir, "*.layout.go.tmpl"))
+		ts, err = ts.ParseGlob(filepath.Join(dir, "*.layout.gohtml"))
 		if err != nil {
 			return nil, err
 		}
-		ts, err = ts.ParseGlob(filepath.Join(dir, "*.partial.go.tmpl"))
+		ts, err = ts.ParseGlob(filepath.Join(dir, "*.partial.gohtml"))
 		if err != nil {
 			return nil, err
 		}
