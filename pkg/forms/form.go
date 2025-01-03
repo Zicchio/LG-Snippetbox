@@ -26,7 +26,7 @@ func (f *Form) Required(fields ...string) {
 	for _, field := range fields {
 		value := f.Get(field)
 		if strings.TrimSpace(value) == "" {
-			f.Errors.Add(field, "This field cannot be empty")
+			f.Errors.Add(field, "This field cannot be blank")
 		}
 	}
 }
@@ -68,7 +68,7 @@ func (f *Form) MatchesPattern(field string, pat *regexp.Regexp) {
 		return
 	}
 	if !pat.Match([]byte(value)) {
-		f.Errors.Add(field, fmt.Sprintf("This field if invalid"))
+		f.Errors.Add(field, fmt.Sprintf("This field is invalid"))
 	}
 }
 

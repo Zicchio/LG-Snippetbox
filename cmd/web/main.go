@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Zicchio/LG-Snippetbox/pkg/models"
 	"github.com/Zicchio/LG-Snippetbox/pkg/models/mysql"
 
 	_ "github.com/go-sql-driver/mysql" // imported as we need the init() function to register mysql in database/sql
@@ -25,6 +26,18 @@ const (
 	TlsSecretKeyPath   = "./tls/key.pem"
 )
 
+type snippetModeler interface {
+	Insert(string, string, string) (int, error)
+	Get(int) (*models.Snippet, error)
+	Latest() ([]*models.Snippet, error)
+}
+
+type userModeler interface {
+	Insert(string, string, string) error
+	Authenticate(string, string) (int, error)
+	Get(int) (*models.User, error)
+}
+
 // Define an application struct to hold the application-wide dependencies for the
 // web application. For now we'll only include fields for the two custom loggers, but
 // we'll add more to it as the build progresses.
@@ -32,9 +45,9 @@ type application struct {
 	errorLog      *log.Logger
 	infoLog       *log.Logger
 	session       *sessions.Session
-	snippets      *mysql.SnippetModel
+	snippets      snippetModeler
 	templateCache map[string]*template.Template
-	users         *mysql.UserModel
+	users         userModeler
 }
 
 func openDB(dns string) (*sql.DB, error) {
@@ -46,6 +59,11 @@ func openDB(dns string) (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+// ping is a demo function used to introduce testing
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("OK"))
 }
 
 func main() {
